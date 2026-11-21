@@ -1,4 +1,8 @@
+package org.example;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -47,13 +51,14 @@ import java.util.List;
  * 经过第二轮游戏后，乘车顺序变为5,1,2,6,3,4；
  * 第三轮相同学号，按重合场景排到队首规则处理，乘车顺序变为2,5,1,6,3,4。
  */
-public class chengcheshunxu {
+public class Chengcheshunxu {
 
-    public int[] game(int x, int y, int[][] rule) {
-        int[] student = createStudent(x);
-        List<Integer> temp = new ArrayList<>();
+    public List<Integer> game(int x, int y, int[][] rule) {
+        List<Integer> student = createStudent(x);
+        List<Integer> temp = new ArrayList<>(x);
 
         for (int i = 0; i < y; i ++) {
+            temp = new ArrayList<>(x);
             int left = 0;
             int right = 0;
             int[] ruleItem = rule[i];
@@ -61,21 +66,38 @@ public class chengcheshunxu {
             int end = ruleItem[1];
 
             List<Integer> a = new ArrayList<>();
-            while (student[left] == start) {
+            while (student.get(left) != start) {
                 left++;
             }
-            while (student[right] == end) {
+            while (student.get(right) != end) {
                 right++;
             }
+            //位置在之后
+            if (left > right) {
+                List<Integer> pre = student.subList(right, student.size());
+                List<Integer> suf = student.subList(0, right);
+                temp.addAll(pre);
+                temp.addAll(suf);
+            } else {
+                List<Integer> pre = student.subList(left, right + 1);
+                List<Integer> mid = student.subList(0, left);
+                List<Integer> suf = student.subList(right+1, student.size());
+                temp.addAll(pre);
+                temp.addAll(mid);
+                temp.addAll(suf);
+            }
+            student = temp;
+
         }
         return student;
     }
 
-    public int[] createStudent(int length) {
-        int[] result = new int[length];
+    public List<Integer> createStudent(int length) {
+        List<Integer> result = new ArrayList<>();
         for (int i = 1; i <= length; i++ ) {
-            result[i] = i;
+            result.add(i);
         }
+
         return result;
     }
 }
